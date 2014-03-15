@@ -8,14 +8,14 @@ import android.support.v4.app.ListFragment;
 import android.widget.SimpleCursorAdapter;
 
 /**
- * NotesListFragment is the listview to view list of {@link Note Notes}
+ * NotesListFragment is the listview to view list of {@link com.katbutler.clionotes.models.Note Notes}
  */
 public class NotesListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private SimpleCursorAdapter adapter;
 
     /**
-     * Sets up cursor loader to the {@link Note Notes}
+     * Sets up cursor loader to the {@link com.katbutler.clionotes.models.Note Notes}
      * in the ContentProvider
      * @param id
      * @param bundle

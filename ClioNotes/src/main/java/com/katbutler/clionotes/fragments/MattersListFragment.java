@@ -8,14 +8,14 @@ import android.support.v4.app.ListFragment;
 import android.widget.SimpleCursorAdapter;
 
 /**
- * MattersListFragment is the listview to view list of {@link Matter Matters}
+ * MattersListFragment is the listview to view list of {@link com.katbutler.clionotes.models.Matter Matters}
  */
 public class MattersListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private SimpleCursorAdapter adapter;
 
     /**
-     * Sets up cursor loader to the {@link Matter Matters}
+     * Sets up cursor loader to the {@link com.katbutler.clionotes.models.Matter Matters}
      * in the ContentProvider
      * @param id
      * @param bundle

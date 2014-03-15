@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import com.katbutler.clionotes.db.ClioContentProvider;
 
 /**
- * Matter model class based on Clio's Matters
+ * Matter model class based on Clio's {@link Matter Matters}
  *
  */
 public class Matter {
