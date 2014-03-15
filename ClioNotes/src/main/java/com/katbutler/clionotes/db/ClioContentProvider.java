@@ -2,6 +2,7 @@ package com.katbutler.clionotes.db;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -11,6 +12,30 @@ import android.util.Log;
  * ClioContentProvider provides content for cached data from Clio
  */
 public class ClioContentProvider extends ContentProvider {
+
+    //UriMatcher return codes
+    private static final int MATTERS = 10;
+    private static final int MATTER_ID = 20;
+    private static final int NOTES_REGARDING_MATTER_ID = 30;
+    private static final int NOTE_ID_REGARDING_MATTER_ID = 40;
+
+    private static final String AUTHORITY = "com.katbutler.provider.clionotes";
+    private static final String MATTER_PATH = "matter";
+    private static final String NOTE_PATH = "note";
+
+    //public URI to my data
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + MATTER_PATH);
+
+
+    private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    static {
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH, MATTERS);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#", MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#" + NOTE_PATH + "/#", NOTE_ID_REGARDING_MATTER_ID);
+    }
+
+
 
     @Override
     public boolean onCreate() {
@@ -44,7 +69,7 @@ public class ClioContentProvider extends ContentProvider {
 
 
     /**
-     * MattersTable represents the SQL table of {@link Matter Matters}
+     * MattersTable represents the SQL table of {@link com.katbutler.clionotes.models.Matter Matters}
      */
     public static class MattersTable {
         public static final String TABLE_MATTER = "matter";
@@ -87,7 +112,7 @@ public class ClioContentProvider extends ContentProvider {
 
 
     /**
-     * NotesTable represents the SQL table of {@link Note Notes}
+     * NotesTable represents the SQL table of {@link com.katbutler.clionotes.models.Note Notes}
      */
     public static class NotesTable {
 
