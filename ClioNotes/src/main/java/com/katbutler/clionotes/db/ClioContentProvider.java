@@ -5,13 +5,19 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * ClioContentProvider provides content for cached data from Clio
  */
 public class ClioContentProvider extends ContentProvider {
+
+    private ClioDatabaseHelper databaseHelper;
 
     //UriMatcher return codes
     private static final int MATTERS = 10;
@@ -32,19 +38,52 @@ public class ClioContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH, MATTERS);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#", MATTER_ID);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
-        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#" + NOTE_PATH + "/#", NOTE_ID_REGARDING_MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/" + NOTE_PATH + "/#", NOTE_ID_REGARDING_MATTER_ID);
     }
-
-
 
     @Override
     public boolean onCreate() {
+        databaseHelper = new ClioDatabaseHelper(getContext());
         return false;
     }
 
     @Override
-    public Cursor query(Uri uri, String[] strings, String s, String[] strings2, String s2) {
-        return null;
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        // Uisng SQLiteQueryBuilder instead of query() method
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+
+
+        int uriType = sURIMatcher.match(uri);
+        switch (uriType) {
+            case MATTERS:
+                queryBuilder.setTables(MattersTable.TABLE_MATTER);
+                break;
+            case MATTER_ID:
+                queryBuilder.setTables(MattersTable.TABLE_MATTER);
+                // adding the ID to the original query
+                queryBuilder.appendWhere(MattersTable.COLUMN_ID + "=" + uri.getLastPathSegment());
+                break;
+            case NOTES_REGARDING_MATTER_ID:
+                queryBuilder.setTables(NotesTable.TABLE_NOTE);
+                queryBuilder.appendWhere(NotesTable.COLUMN_MATTER_ID_FK + "=" + uri.getLastPathSegment());
+                break;
+            case NOTE_ID_REGARDING_MATTER_ID:
+                queryBuilder.setTables(NotesTable.TABLE_NOTE);
+                queryBuilder.appendWhere(NotesTable.COLUMN_ID + "=" + uri.getLastPathSegment());
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
+
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+
+        // make sure that potential listeners are getting notified
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+
+        return cursor;
     }
 
     @Override
@@ -68,6 +107,8 @@ public class ClioContentProvider extends ContentProvider {
     }
 
 
+
+
     /**
      * MattersTable represents the SQL table of {@link com.katbutler.clionotes.models.Matter Matters}
      */
@@ -85,7 +126,7 @@ public class ClioContentProvider extends ContentProvider {
         private static final String DATABASE_CREATE = "create table "
                 + TABLE_MATTER
                 + "("
-                + COLUMN_ID + " integer primary key autoincrement, "
+                + COLUMN_ID + " integer primary key, "
                 + COLUMN_DISPLAY_NUMBER + " text, "
                 + COLUMN_STATUS + " text,"
                 + COLUMN_DESCRIPTION + " text"
@@ -118,6 +159,7 @@ public class ClioContentProvider extends ContentProvider {
 
         public static final String TABLE_NOTE = "note";
         public static final String COLUMN_ID = "_id";
+        public static final String COLUMN_MATTER_ID_FK = "matter_id_fk";
         public static final String COLUMN_SUBJECT = "subject";
         public static final String COLUMN_DETAIL = "detail";
         public static final String COLUMN_DATE = "date";
@@ -128,7 +170,7 @@ public class ClioContentProvider extends ContentProvider {
         private static final String DATABASE_CREATE = "create table "
                 + TABLE_NOTE
                 + "("
-                + COLUMN_ID + " integer primary key autoincrement, "
+                + COLUMN_ID + " integer primary key, "
                 + COLUMN_SUBJECT + " text, "
                 + COLUMN_DETAIL + " text,"
                 + COLUMN_DATE + " text"
