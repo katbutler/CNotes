@@ -4,5 +4,6 @@
     <string name="app_name">ClioNotes</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="no_notes">There are no Notes associated with this Matter.</string>
 
 </resources>
