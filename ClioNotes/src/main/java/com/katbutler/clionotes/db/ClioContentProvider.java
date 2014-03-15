@@ -32,7 +32,6 @@ public class ClioContentProvider extends ContentProvider {
     //public URI to my data
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + MATTER_PATH);
 
-
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH, MATTERS);
@@ -121,6 +120,8 @@ public class ClioContentProvider extends ContentProvider {
         public static final String COLUMN_OPEN_DATE = "open_date";
         public static final String COLUMN_CLOSE_DATE = "close_date";
         public static final String COLUMN_PENDING_DATE = "pending_date";
+        public static final String COLUMN_REST_STATE = "rest_state";
+        public static final String COLUMN_REST_RESPONSE = "rest_response";
 
         // Database creation SQL statement
         private static final String DATABASE_CREATE = "create table "
@@ -128,11 +129,13 @@ public class ClioContentProvider extends ContentProvider {
                 + "("
                 + COLUMN_ID + " integer primary key, "
                 + COLUMN_DISPLAY_NUMBER + " text, "
-                + COLUMN_STATUS + " text,"
-                + COLUMN_DESCRIPTION + " text"
-                + COLUMN_OPEN_DATE + " text,"
-                + COLUMN_CLOSE_DATE + " text,"
-                + COLUMN_PENDING_DATE + " text"
+                + COLUMN_STATUS + " text, "
+                + COLUMN_DESCRIPTION + " text, "
+                + COLUMN_OPEN_DATE + " text, "
+                + COLUMN_CLOSE_DATE + " text, "
+                + COLUMN_PENDING_DATE + " text, "
+                + COLUMN_REST_STATE + " text, "
+                + COLUMN_REST_RESPONSE + " text"
                 + ");";
 
 
@@ -165,17 +168,22 @@ public class ClioContentProvider extends ContentProvider {
         public static final String COLUMN_DATE = "date";
         public static final String COLUMN_CREATED_AT = "created_at";
         public static final String COLUMN_UPDATED_AT = "updated_at";
+        public static final String COLUMN_REST_STATE = "rest_state";
+        public static final String COLUMN_REST_RESPONSE = "rest_response";
 
         // Database creation SQL statement
         private static final String DATABASE_CREATE = "create table "
                 + TABLE_NOTE
                 + "("
                 + COLUMN_ID + " integer primary key, "
+                + COLUMN_MATTER_ID_FK + " integer, "
                 + COLUMN_SUBJECT + " text, "
-                + COLUMN_DETAIL + " text,"
-                + COLUMN_DATE + " text"
-                + COLUMN_CREATED_AT + " text,"
-                + COLUMN_UPDATED_AT + " text"
+                + COLUMN_DETAIL + " text, "
+                + COLUMN_DATE + " text, "
+                + COLUMN_CREATED_AT + " text, "
+                + COLUMN_UPDATED_AT + " text, "
+                + COLUMN_REST_STATE + " text, "
+                + COLUMN_REST_RESPONSE + " text"
                 + ");";
 
 
