@@ -21,4 +21,5 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:library:0.9.3'
 }
