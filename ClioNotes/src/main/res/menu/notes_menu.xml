@@ -1,7 +1,10 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:clionotes="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_add_note"
+        android:title="Add Note"
+        android:orderInCategory="100"
         android:icon="@drawable/ic_action_new"
-        android:showAsAction="always" />
+        clionotes:showAsAction="ifRoom" />
 
 </menu>
