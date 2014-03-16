@@ -29,7 +29,7 @@ public class MattersListFragment extends ListFragment implements LoaderManager.L
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         fillData();
     }
 
@@ -50,6 +50,7 @@ public class MattersListFragment extends ListFragment implements LoaderManager.L
     public void onListItemClick(ListView listView, View view, int position, long id) {
         // TODO load the NotesListFragment for the selected matter
         getActivity().getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
                 .replace(R.id.fragment_container, new NotesListFragment())
                 .addToBackStack(null)
                 .commit();
