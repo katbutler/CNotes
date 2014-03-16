@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.katbutler.clionotes.R;
 import com.katbutler.clionotes.db.ClioContentProvider;
 import com.katbutler.clionotes.db.MatterCursorAdapter;
+import com.katbutler.clionotes.rest.RESTServiceHelper;
 
 /**
  * MattersListFragment is the listview to view list of {@link com.katbutler.clionotes.models.Matter Matters}
@@ -29,6 +30,8 @@ public class MattersListFragment extends ListFragment implements LoaderManager.L
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        RESTServiceHelper.getInstance().fetchMatters();
 
         fillData();
     }

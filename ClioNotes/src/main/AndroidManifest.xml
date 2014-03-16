@@ -18,7 +18,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
+
+        <service
+            android:name=".rest.RESTService"
+            android:label="@string/service_name"
+            >
+        </service>
+
+
         <provider
             android:authorities="com.katbutler.provider.clionotes"
             android:name=".db.ClioContentProvider">

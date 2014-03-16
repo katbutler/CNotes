@@ -15,6 +15,8 @@ import android.os.Build;
 import com.katbutler.clionotes.db.ClioContentProvider;
 import com.katbutler.clionotes.fragments.MattersListFragment;
 import com.katbutler.clionotes.models.Matter;
+import com.katbutler.clionotes.rest.RESTService;
+import com.katbutler.clionotes.rest.RESTServiceHelper;
 
 public class ClioNotesActivity extends ActionBarActivity {
 
@@ -22,6 +24,9 @@ public class ClioNotesActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // For now to give the Service Helper the context
+        RESTServiceHelper.getInstance().setContext(getApplicationContext());
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
