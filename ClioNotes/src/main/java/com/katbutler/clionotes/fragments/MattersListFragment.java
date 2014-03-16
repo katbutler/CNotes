@@ -38,6 +38,8 @@ public class MattersListFragment extends ListFragment implements LoaderManager.L
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(false);
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+
         return inflater.inflate(R.layout.matters_list_fragment, container, false);
     }
 

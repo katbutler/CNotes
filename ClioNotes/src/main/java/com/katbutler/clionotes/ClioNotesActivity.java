@@ -44,4 +44,9 @@ public class ClioNotesActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        getSupportFragmentManager().popBackStack();
+        return super.onSupportNavigateUp();
+    }
 }
