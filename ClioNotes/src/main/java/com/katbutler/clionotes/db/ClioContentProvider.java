@@ -91,8 +91,20 @@ public class ClioContentProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues contentValues) {
-        return null;
+    public Uri insert(Uri uri, ContentValues values) {
+        int uriType = sURIMatcher.match(uri);
+        SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
+        int rowsDeleted = 0;
+        long id = 0;
+        switch (uriType) {
+            case MATTERS:
+                id = sqlDB.replace(MattersTable.TABLE_MATTER, null, values);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return Uri.parse(MATTER_PATH + "/" + id);
     }
 
     @Override
