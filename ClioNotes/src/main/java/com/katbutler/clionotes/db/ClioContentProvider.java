@@ -36,8 +36,19 @@ public class ClioContentProvider extends ContentProvider {
     static {
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH, MATTERS);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#", MATTER_ID);
-        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#/" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/-1/" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/" + NOTE_PATH + "/#", NOTE_ID_REGARDING_MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/" + NOTE_PATH + "/-1", NOTE_ID_REGARDING_MATTER_ID);
+    }
+
+    /**
+     * Helper mathod to create Uri for Notes path
+     * @param matterId
+     * @return
+     */
+    public static Uri getNotesUri(Long matterId) {
+        return Uri.parse(String.format("content://%s/%s/%d/%s",AUTHORITY, MATTER_PATH, matterId, NOTE_PATH ));
     }
 
     @Override
@@ -64,7 +75,7 @@ public class ClioContentProvider extends ContentProvider {
                 break;
             case NOTES_REGARDING_MATTER_ID:
                 queryBuilder.setTables(NotesTable.TABLE_NOTE);
-                queryBuilder.appendWhere(NotesTable.COLUMN_MATTER_ID_FK + "=" + uri.getLastPathSegment());
+                queryBuilder.appendWhere(NotesTable.COLUMN_MATTER_ID_FK + "=" + uri.getPathSegments().get(1));
                 break;
             case NOTE_ID_REGARDING_MATTER_ID:
                 queryBuilder.setTables(NotesTable.TABLE_NOTE);
@@ -92,19 +103,35 @@ public class ClioContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
         int rowsDeleted = 0;
+
+
+        int uriType = sURIMatcher.match(uri);
         long id = 0;
+        Uri returnUri = null;
+
         switch (uriType) {
             case MATTERS:
                 id = sqlDB.replace(MattersTable.TABLE_MATTER, null, values);
+                Uri.parse(MATTER_PATH + "/" + id);
+                break;
+            case MATTER_ID:
+                break;
+            case NOTES_REGARDING_MATTER_ID:
+                values.put(NotesTable.COLUMN_MATTER_ID_FK, uri.getPathSegments().get(1));
+                id = sqlDB.replace(NotesTable.TABLE_NOTE, null, values);
+                Uri.parse(NOTE_PATH + "/" + id);
+                break;
+            case NOTE_ID_REGARDING_MATTER_ID:
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
+
+
         getContext().getContentResolver().notifyChange(uri, null);
-        return Uri.parse(MATTER_PATH + "/" + id);
+        return returnUri;
     }
 
     @Override

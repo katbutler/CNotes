@@ -1,28 +1,26 @@
 package com.katbutler.clionotes.fragments;
 
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import com.katbutler.clionotes.R;
 import com.katbutler.clionotes.db.ClioContentProvider;
+import com.katbutler.clionotes.db.MatterCursorAdapter;
 
 /**
  * MattersListFragment is the listview to view list of {@link com.katbutler.clionotes.models.Matter Matters}
  */
-public class MattersListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MattersListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private SimpleCursorAdapter adapter;
+    private MatterCursorAdapter adapter;
 
     public MattersListFragment() {
 
@@ -54,11 +52,24 @@ public class MattersListFragment extends ListFragment implements LoaderManager.L
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         // TODO load the NotesListFragment for the selected matter
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.fragment_container, new NotesListFragment())
-                .addToBackStack(null)
-                .commit();
+
+        Long matterId = (Long) view.getTag();
+
+        if (matterId != null) {
+
+            NotesListFragment notesListFragment = new NotesListFragment();
+
+            Bundle args = new Bundle();
+            args.putLong(ClioContentProvider.MattersTable.COLUMN_ID, matterId);
+            notesListFragment.setArguments(args); //now this fragment can get the user that was selected
+
+
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                    .replace(R.id.fragment_container, notesListFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
         super.onListItemClick(listView, view, position, id);
     }
 
@@ -67,11 +78,9 @@ public class MattersListFragment extends ListFragment implements LoaderManager.L
      */
     private void fillData() {
 
-        String[] from = new String[] { ClioContentProvider.MattersTable.COLUMN_DISPLAY_NUMBER };
-        int[] to = new int[] { R.id.label };
-
-        getActivity().getSupportLoaderManager().initLoader(0, null, this);
-        adapter = new SimpleCursorAdapter(this.getActivity(), R.layout.matter_row, null, from, to, 0);
+        getLoaderManager().initLoader(0, null, this);
+//        getActivity().getSupportLoaderManager().initLoader(0, null, this);
+        adapter = new MatterCursorAdapter(this.getActivity(), null);
 
         setListAdapter(adapter);
     }

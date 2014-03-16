@@ -4,7 +4,18 @@
     android:layout_height="wrap_content" >
 
     <TextView
-        android:id="@+id/display_number_text"
+        android:id="@+id/subject_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:paddingLeft="10dp"
+        android:lines="1"
+        android:text="@+id/TextView01"
+        android:textSize="24dp">
+    </TextView>
+
+    <TextView
+        android:id="@+id/detail_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"

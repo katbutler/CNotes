@@ -1,33 +1,45 @@
 package com.katbutler.clionotes.fragments;
 
-import android.app.LoaderManager;
-import android.content.Loader;
+
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.NavUtils;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SimpleCursorAdapter;
 
 import com.katbutler.clionotes.R;
+import com.katbutler.clionotes.db.ClioContentProvider;
+import com.katbutler.clionotes.db.NoteCursorAdapter;
 
 /**
  * NotesListFragment is the listview to view list of {@link com.katbutler.clionotes.models.Note Notes}
  */
-public class NotesListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class NotesListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private SimpleCursorAdapter adapter;
+    private NoteCursorAdapter adapter;
+    private Long matterId;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
-        //TODO initialize fragment
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        matterId = getArguments().getLong(ClioContentProvider.MattersTable.COLUMN_ID);
+
+        fillData();
     }
 
     @Override
@@ -57,6 +69,19 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
         return inflater.inflate(R.layout.notes_list_fragment, container, false);
     }
 
+
+    /**
+     * Fill the notes list from the Cursor
+     */
+    private void fillData() {
+
+        getLoaderManager().initLoader(0, null, this);
+//        getActivity().getSupportLoaderManager().initLoader(0, null, this);
+        adapter = new NoteCursorAdapter(this.getActivity(), null);
+
+        setListAdapter(adapter);
+    }
+
     /**
      * Sets up cursor loader to the {@link com.katbutler.clionotes.models.Note Notes}
      * in the ContentProvider
@@ -66,8 +91,11 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
-        //TODO create cursor loader for Notes
-        return null;
+        String[] projection = { ClioContentProvider.NotesTable.COLUMN_ID, ClioContentProvider.NotesTable.COLUMN_SUBJECT, ClioContentProvider.NotesTable.COLUMN_DETAIL};
+        Uri notesUri = ClioContentProvider.getNotesUri(getMatterId());
+        System.out.println(notesUri.toString());
+        CursorLoader cursorLoader = new CursorLoader(this.getActivity(), notesUri, projection, null, null, null);
+        return cursorLoader;
     }
 
     /**
@@ -91,10 +119,23 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     public void addNote() {
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.fragment_container, new NoteDetailFragment())
-                .addToBackStack(null)
-                .commit();
+
+        if (getMatterId() != null) {
+            NoteDetailFragment noteDetailFragment = new NoteDetailFragment();
+
+            Bundle args = new Bundle();
+            args.putLong(ClioContentProvider.MattersTable.COLUMN_ID, getMatterId());
+            noteDetailFragment.setArguments(args);
+
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                    .replace(R.id.fragment_container, noteDetailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
+    private Long getMatterId() {
+        return matterId;
     }
 }
