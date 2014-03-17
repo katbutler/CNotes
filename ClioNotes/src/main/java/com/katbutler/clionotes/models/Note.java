@@ -47,6 +47,15 @@ public class Note {
     private String updatedAt;
 
 
+    public Note() {
+
+    }
+
+    public Note(Long id) {
+        setId(id);
+    }
+
+
     public Long getId() {
         return id;
     }
@@ -114,9 +123,13 @@ public class Note {
 
     public class Regarding {
         private Long id;
-        private String type;
+        private String type = "Matter";
         private String name;
         private String url;
+
+        public Regarding(Long id) {
+            setId(id);
+        }
 
         public Long getId() {
             return id;

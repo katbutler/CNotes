@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
@@ -54,6 +55,7 @@ public class RESTClient {
         private String url = "";
         private Map<String, List<String>> queryStringMap = new HashMap<String, List<String>>();
         private Map<String, List<String>> headerMap = new HashMap<String, List<String>>();
+        private String body = "";
 
         public RESTRequestData(String url) {
             this.url = url;
@@ -188,6 +190,15 @@ public class RESTClient {
             }
         }
 
+        public String getBody() {
+            return body;
+        }
+
+        public RESTRequestData withBody(String body) {
+            this.body = body;
+            return this;
+        }
+
         /**
          * Execute this request as a GET
          * @return The {@link RESTResponse} from the web
@@ -234,6 +245,7 @@ public class RESTClient {
                     case GET:
                         // TODO implement a network GET request with RESTRequestData
                         HttpGet httpGet = new HttpGet(getUrl());
+
                         if (getQueryString().size() > 0)
                             httpGet.setParams(getBasicHttpQueryParamters());
                         if (getHeaders().size() > 0)
@@ -244,7 +256,11 @@ public class RESTClient {
                     case POST:
                         // TODO implement a network POST request with RESTRequestData
                         HttpPost httpPost = new HttpPost(getUrl());
-                        httpPost.setEntity(getQueryParametersUrlEncoded());
+
+                        if (getBody().length() > 0)
+                            httpPost.setEntity(new StringEntity(getBody()));
+                        if (getQueryString().size() > 0)
+                            httpPost.setParams(getBasicHttpQueryParamters());
                         if (getHeaders().size() > 0)
                             updateHeaders(httpPost);
 
@@ -253,6 +269,11 @@ public class RESTClient {
                     case PUT:
                         // TODO implement a network PUT request with RESTRequestData
                         HttpPut httpPut = new HttpPut(getUrl());
+
+                        if (getBody().length() > 0)
+                            httpPut.setEntity(new StringEntity(getBody()));
+                        if (getQueryString().size() > 0)
+                            httpPut.setParams(getBasicHttpQueryParamters());
                         if (getHeaders().size() > 0)
                             updateHeaders(httpPut);
 

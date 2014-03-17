@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.katbutler.clionotes.models.Matters;
+import com.katbutler.clionotes.models.Note;
 import com.katbutler.clionotes.models.Notes;
 
 /**
@@ -81,13 +82,20 @@ public class RESTService extends IntentService {
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                Note note = new Note(noteId);
+                note.setId(noteId);
+                note.setRegarding(note.new Regarding(matterId));
+
+                // TODO get Note details from DBs
+
                 RESTClient.RESTResponse resp = RESTClient.url(String.format(RESTConstants.ClioAPI.NEW_NOTE_URL, matterId))
                         .withHeader("Authorization", "Bearer Xzd7LAtiZZ6HBBjx0DVRqalqN8yjvXgzY5qaD15a")
                         .withHeader("Accept", "application/json")
                         .withHeader("Content-Type", "application/json")
+                        .withBody(new Gson().toJson(note))
                         .post();
 
-                //TODO add note as JSON body of request!!
 
                 // Response is null when no network contection
                 if (resp == null)
