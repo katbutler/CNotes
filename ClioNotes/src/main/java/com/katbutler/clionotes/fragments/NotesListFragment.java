@@ -31,6 +31,7 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
 
     private NoteCursorAdapter adapter;
     private Long matterId;
+    private Long tmpNoteId;
 
 
     @Override
@@ -119,17 +120,16 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
         super.onCreateContextMenu(menu, v, menuInfo);
 
         Long noteId = (Long) v.getTag();
-        //TODO pass in noteid from view tag
+        tmpNoteId = noteId;
 
-//        menu.add(0, noteId, 0, "Delete");
-        menu.add(0, v.getId(), 0, "Delete");
+        menu.add(0, Menu.NONE, 0, "Delete");
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if (item.getTitle().equals("Delete")) {
-            //TODO delete note from local database and send delete request to clio
+            deleteNote();
         }
         return super.onContextItemSelected(item);
     }
@@ -185,6 +185,11 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
                     .addToBackStack(null)
                     .commit();
         }
+    }
+
+    public void deleteNote() {
+        //TODO delete note from local database and send delete request to clio
+        //TODO delete using tmpNoteId
     }
 
     private Long getMatterId() {

@@ -44,6 +44,9 @@ public class NoteCursorAdapter extends CursorAdapter {
         if (details != null) {
             TextView detailText = (TextView) view.findViewById(R.id.detail_text);
             detailText.setText(details);
+        } else {
+            TextView detailText = (TextView) view.findViewById(R.id.detail_text);
+            detailText.setText("");
         }
 
     }
