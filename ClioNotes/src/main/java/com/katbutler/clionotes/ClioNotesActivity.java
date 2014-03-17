@@ -1,6 +1,7 @@
 package com.katbutler.clionotes;
 
 import android.content.ContentValues;
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
