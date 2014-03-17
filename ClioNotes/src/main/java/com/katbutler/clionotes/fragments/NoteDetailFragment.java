@@ -47,11 +47,15 @@ public class NoteDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Get data from intents
-        if (getArguments().containsKey(Constants.IntentExtrasKeys.MATTER_ID))
+        if (getArguments().containsKey(Constants.IntentExtrasKeys.MATTER_ID)) {
             matterId = getArguments().getLong(Constants.IntentExtrasKeys.MATTER_ID);
+            getActivity().setTitle("New Note");
+        }
 
-        if (getArguments().containsKey(Constants.IntentExtrasKeys.NOTE_ID))
+        if (getArguments().containsKey(Constants.IntentExtrasKeys.NOTE_ID)) {
             noteId = getArguments().getLong(Constants.IntentExtrasKeys.NOTE_ID);
+            getActivity().setTitle("Edit Note");
+        }
 
         subjectEditText = (EditText) view.findViewById(R.id.subjectEditText);
         detailEditText = (EditText) view.findViewById(R.id.detailEditText);

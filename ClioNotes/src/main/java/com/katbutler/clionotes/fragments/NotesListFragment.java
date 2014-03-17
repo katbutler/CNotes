@@ -67,6 +67,7 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActivity().setTitle("Notes");
 
         return inflater.inflate(R.layout.notes_list_fragment, container, false);
     }
