@@ -8,13 +8,16 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.katbutler.clionotes.R;
 import com.katbutler.clionotes.db.ClioContentProvider;
@@ -95,6 +98,8 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
         super.onListItemClick(listView, view, position, id);
     }
 
+
+
     /**
      * Fill the notes list from the Cursor
      */
@@ -105,6 +110,28 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
         adapter = new NoteCursorAdapter(this.getActivity(), null);
 
         setListAdapter(adapter);
+
+        registerForContextMenu(getListView());
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        Long noteId = (Long) v.getTag();
+        //TODO pass in noteid from view tag
+
+//        menu.add(0, noteId, 0, "Delete");
+        menu.add(0, v.getId(), 0, "Delete");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        if (item.getTitle().equals("Delete")) {
+            //TODO delete note from local database and send delete request to clio
+        }
+        return super.onContextItemSelected(item);
     }
 
     /**

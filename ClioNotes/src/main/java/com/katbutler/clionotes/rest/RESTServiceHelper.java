@@ -2,6 +2,9 @@ package com.katbutler.clionotes.rest;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import com.katbutler.clionotes.models.*;
 
 /**
@@ -37,6 +40,13 @@ public class RESTServiceHelper {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     /**
