@@ -41,6 +41,8 @@ public class RESTService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         // Handle the intent
         int requestType = intent.getIntExtra(RESTConstants.IntentExtraKeys.REQUEST_TYPE, -1);
+        Long matterId;
+        Long noteId;
 
         switch(requestType) {
             case RESTConstants.RequestTypes.GET_ALL_MATTERS:
@@ -49,7 +51,7 @@ public class RESTService extends IntentService {
             case RESTConstants.RequestTypes.GET_MATTER_WITH_ID:
                 break;
             case RESTConstants.RequestTypes.GET_ALL_NOTES_FOR_MATTER:
-                Long matterId = intent.getLongExtra(RESTConstants.IntentExtraKeys.MATTER_ID, -1);
+                matterId = intent.getLongExtra(RESTConstants.IntentExtraKeys.MATTER_ID, -1);
 
                 if(matterId != -1) {
                     getAllNotesForMatter(matterId);
@@ -59,6 +61,13 @@ public class RESTService extends IntentService {
 
                 break;
             case RESTConstants.RequestTypes.POST_NEW_NOTE:
+                matterId = intent.getLongExtra(RESTConstants.IntentExtraKeys.MATTER_ID, -1);
+                noteId = intent.getLongExtra(RESTConstants.IntentExtraKeys.NOTE_ID, -1);
+
+                if(matterId != -1 && (noteId != -1)) {
+                    createNewNoteForMatter(matterId, noteId);
+                }
+
                 break;
 
             default:
@@ -66,6 +75,35 @@ public class RESTService extends IntentService {
                 stopSelf();
                 break;
         }
+    }
+
+    private void createNewNoteForMatter(final Long matterId, final Long noteId) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RESTClient.RESTResponse resp = RESTClient.url(String.format(RESTConstants.ClioAPI.NEW_NOTE_URL, matterId))
+                        .withHeader("Authorization", "Bearer Xzd7LAtiZZ6HBBjx0DVRqalqN8yjvXgzY5qaD15a")
+                        .withHeader("Accept", "application/json")
+                        .withHeader("Content-Type", "application/json")
+                        .post();
+
+                //TODO add note as JSON body of request!!
+
+                // Response is null when no network contection
+                if (resp == null)
+                    return;
+
+                if(resp.getStatusCode() == 200) {
+                    Log.i("RSP", resp.getBody());
+                    Gson gson = new Gson();
+
+                    Notes notes = gson.fromJson(resp.getBody(), Notes.class);
+                    // TODO pass matters to processor to be processed into the SQLite DB
+                    new RESTProcessor().processNotesForMatter(notes, matterId);
+                }
+                //TODO handle other HTTP status codes
+            }
+        }).start();
     }
 
     public void getAllMatters() {

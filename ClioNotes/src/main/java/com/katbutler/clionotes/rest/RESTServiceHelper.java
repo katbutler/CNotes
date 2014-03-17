@@ -69,4 +69,16 @@ public class RESTServiceHelper {
         context.startService(i);
     }
 
+    public void createNote(Long matterId, Long noteId) {
+        // Create the intent for the RESTService
+        Intent i = new Intent(context, RESTService.class);
+
+        // Add required REST data to intent
+        i.putExtra(RESTConstants.IntentExtraKeys.REQUEST_TYPE, RESTConstants.RequestTypes.GET_ALL_NOTES_FOR_MATTER);
+        i.putExtra(RESTConstants.IntentExtraKeys.MATTER_ID, matterId);
+        i.putExtra(RESTConstants.IntentExtraKeys.NOTE_ID, noteId);
+
+        context.startService(i);
+    }
+
 }

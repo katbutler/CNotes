@@ -9,7 +9,12 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
+import com.katbutler.clionotes.fragments.Constants;
+import com.katbutler.clionotes.rest.RESTConstants;
+import com.katbutler.clionotes.rest.RESTServiceHelper;
+
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 
 /**
@@ -37,10 +42,10 @@ public class ClioContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH, MATTERS);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#", MATTER_ID);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#/" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
-        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/-1/" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/-#/" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#/" + NOTE_PATH + "/#", NOTE_ID_REGARDING_MATTER_ID);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/" + NOTE_PATH + "/#", NOTE_ID_REGARDING_MATTER_ID);
-        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/" + NOTE_PATH + "/-1", NOTE_ID_REGARDING_MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/" + NOTE_PATH + "/-#", NOTE_ID_REGARDING_MATTER_ID);
     }
 
     /**
@@ -123,12 +128,19 @@ public class ClioContentProvider extends ContentProvider {
                 break;
             case MATTER_ID:
                 break;
-            case NOTES_REGARDING_MATTER_ID:
+            case NOTES_REGARDING_MATTER_ID: // GET/POST
                 values.put(NotesTable.COLUMN_MATTER_ID_FK, uri.getPathSegments().get(1));
                 id = sqlDB.replace(NotesTable.TABLE_NOTE, null, values);
                 Uri.parse(NOTE_PATH + "/" + id);
+
+                if(values.containsKey(NotesTable.COLUMN_REST_STATE)) {
+                    if(values.getAsString(NotesTable.COLUMN_REST_STATE).equals(RESTConstants.RESTStates.POSTING)) {
+                        RESTServiceHelper.getInstance().createNote(Long.parseLong(uri.getPathSegments().get(1)), values.getAsLong(NotesTable.COLUMN_ID));
+                    }
+                }
+
                 break;
-            case NOTE_ID_REGARDING_MATTER_ID:
+            case NOTE_ID_REGARDING_MATTER_ID: // GET/PUT
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -149,7 +161,15 @@ public class ClioContentProvider extends ContentProvider {
         return 0;
     }
 
+    private static long index = (new Date().getTime() * -1);
 
+    /**
+     * Create a new unique id for new object before they are posted to Clio server
+     * @return
+     */
+    public static long createNewIndex() {
+        return --index;
+    }
 
 
     /**

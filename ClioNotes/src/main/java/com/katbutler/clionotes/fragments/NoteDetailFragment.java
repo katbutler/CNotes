@@ -28,7 +28,7 @@ import java.net.URI;
 public class NoteDetailFragment extends Fragment {
 
     private Long matterId = -1l;
-    private Long noteId = -1l;
+    private Long noteId = ClioContentProvider.createNewIndex();
 
 
     private EditText subjectEditText;
@@ -95,6 +95,7 @@ public class NoteDetailFragment extends Fragment {
      */
     public void saveNote() {
         ContentValues values = new ContentValues();
+        Uri uri;
 
         values.put(ClioContentProvider.NotesTable.COLUMN_ID, getNoteId());
         values.put(ClioContentProvider.NotesTable.COLUMN_SUBJECT, subjectEditText.getText().toString());
@@ -102,12 +103,13 @@ public class NoteDetailFragment extends Fragment {
 
         // Update the REST state based on whether it is a new note or not
         if (isNewNote()) {
+            uri = ClioContentProvider.getNotesUri(getMatterId());
             values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.POSTING);
         } else {
+            uri = ClioContentProvider.getNoteUri(getMatterId(), getNoteId());
             values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.PUTING);
         }
 
-        Uri uri = ClioContentProvider.getNotesUri(getMatterId());
         getContentResolver().insert(uri, values);
 
         getActivity().getSupportFragmentManager().popBackStack();
@@ -141,7 +143,7 @@ public class NoteDetailFragment extends Fragment {
      * @return true if it is a new {@link com.katbutler.clionotes.models.Note}
      */
     public boolean isNewNote() {
-        return (getNoteId() == -1);
+        return (getNoteId() < 0);
     }
 
     /**
@@ -151,7 +153,7 @@ public class NoteDetailFragment extends Fragment {
      */
     private Note getNoteWithId(Long nId) {
 
-        if(nId != -1) {
+        if(nId >= 0) {
             Note note = new Note();
 
             String[] projection = new String[] {ClioContentProvider.NotesTable.COLUMN_ID,
