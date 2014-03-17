@@ -54,11 +54,12 @@ public class MattersListFragment extends ListFragment implements LoaderManager.L
      */
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
-        // TODO load the NotesListFragment for the selected matter
-
         Long matterId = (Long) view.getTag();
 
         if (matterId != null) {
+
+            //start background service to get all notes for matter
+            RESTServiceHelper.getInstance().fetchNotesForMatter(matterId);
 
             NotesListFragment notesListFragment = new NotesListFragment();
 

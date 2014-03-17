@@ -1,7 +1,10 @@
 package com.katbutler.clionotes.models;
 
 
+import android.content.ContentValues;
+
 import com.google.gson.annotations.SerializedName;
+import com.katbutler.clionotes.db.ClioContentProvider;
 
 import java.util.Date;
 
@@ -34,13 +37,14 @@ public class Note {
     private Long id;
     private String subject;
     private String detail;
-    private Date date;
+    private String date;
+    private Regarding regarding;
 
     @SerializedName("created_at")
-    private Date createdAt;
+    private String createdAt;
 
     @SerializedName("updated_at")
-    private Date updatedAt;
+    private String updatedAt;
 
 
     public Long getId() {
@@ -67,28 +71,84 @@ public class Note {
         this.detail = detail;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public String getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Regarding getRegarding() {
+        return regarding;
+    }
+
+    public void setRegarding(Regarding regarding) {
+        this.regarding = regarding;
+    }
+
+    public ContentValues getContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(ClioContentProvider.NotesTable.COLUMN_ID, getId());
+        values.put(ClioContentProvider.NotesTable.COLUMN_SUBJECT, getSubject());
+        values.put(ClioContentProvider.NotesTable.COLUMN_DETAIL, getDetail());
+        values.put(ClioContentProvider.NotesTable.COLUMN_MATTER_ID_FK, getRegarding().getId());
+        return values;
+    }
+
+    public class Regarding {
+        private Long id;
+        private String type;
+        private String name;
+        private String url;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
     }
 
 }

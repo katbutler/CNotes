@@ -58,12 +58,13 @@ public class RESTServiceHelper {
      * Start a service to request a {@link Matter} with id
      * @param id the id of the {@link Matter} we are trying to fetch
      */
-    public void fetchMatter(String id) {
+    public void fetchNotesForMatter(Long id) {
         // Create the intent for the RESTService
         Intent i = new Intent(context, RESTService.class);
 
         // Add required REST data to intent
-        i.putExtra(RESTConstants.IntentExtraKeys.REQUEST_TYPE, RESTConstants.RequestTypes.GET_MATTER_WITH_ID);
+        i.putExtra(RESTConstants.IntentExtraKeys.REQUEST_TYPE, RESTConstants.RequestTypes.GET_ALL_NOTES_FOR_MATTER);
+        i.putExtra(RESTConstants.IntentExtraKeys.MATTER_ID, id);
 
         context.startService(i);
     }

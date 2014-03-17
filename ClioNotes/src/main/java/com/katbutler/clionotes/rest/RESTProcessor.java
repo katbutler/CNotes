@@ -8,6 +8,7 @@ import android.net.Uri;
 
 import com.katbutler.clionotes.db.ClioContentProvider;
 import com.katbutler.clionotes.models.Matters;
+import com.katbutler.clionotes.models.Notes;
 
 /**
  * {@link RESTProcessor} processes the REST responses recieved from the server.
@@ -33,6 +34,10 @@ public class RESTProcessor {
 //        }
 
         getContentResolver().bulkInsert( ClioContentProvider.CONTENT_URI, matters.getContentValues().toArray( new ContentValues[0] ) );
+    }
+
+    public void processNotesForMatter(Notes notes, Long matterId) {
+        getContentResolver().bulkInsert( ClioContentProvider.getNotesUri(matterId), notes.getContentValues().toArray( new ContentValues[0] ) );
     }
 
     /**

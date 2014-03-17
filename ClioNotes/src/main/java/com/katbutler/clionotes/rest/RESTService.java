@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.katbutler.clionotes.models.Matters;
+import com.katbutler.clionotes.models.Notes;
 
 /**
  * Background Service to run the network REST request to web server.
@@ -48,6 +49,11 @@ public class RESTService extends IntentService {
             case RESTConstants.RequestTypes.GET_MATTER_WITH_ID:
                 break;
             case RESTConstants.RequestTypes.GET_ALL_NOTES_FOR_MATTER:
+                Long matterId = intent.getLongExtra(RESTConstants.IntentExtraKeys.MATTER_ID, -1);
+
+                if(matterId != -1) {
+                    getAllNotesForMatter(matterId);
+                }
                 break;
 
 
@@ -86,6 +92,32 @@ public class RESTService extends IntentService {
                 //TODO handle other HTTP status codes
             }
         }).start();
+    }
 
+    public void getAllNotesForMatter(final Long matterId) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RESTClient.RESTResponse resp = RESTClient.url(String.format(RESTConstants.ClioAPI.MATTER_NOTE_URL, matterId))
+                        .withHeader("Authorization", "Bearer Xzd7LAtiZZ6HBBjx0DVRqalqN8yjvXgzY5qaD15a")
+                        .withHeader("Accept", "application/json")
+                        .withHeader("Content-Type", "application/json")
+                        .get();
+
+                // Response is null when no network contection
+                if (resp == null)
+                    return;
+
+                if(resp.getStatusCode() == 200) {
+                    Log.i("RSP", resp.getBody());
+                    Gson gson = new Gson();
+
+                    Notes notes = gson.fromJson(resp.getBody(), Notes.class);
+                    // TODO pass matters to processor to be processed into the SQLite DB
+                    new RESTProcessor().processNotesForMatter(notes, matterId);
+                }
+                //TODO handle other HTTP status codes
+            }
+        }).start();
     }
 }

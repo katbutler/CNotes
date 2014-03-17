@@ -12,6 +12,7 @@ public class RESTConstants {
         public final static String REQUEST_TYPE = "REQUEST_TYPE";
         public final static String URL = "URL";
         public final static String HTTP_METHOD = "METHOD";
+        public final static String MATTER_ID = "MATTER_ID";
     }
 
     /**
@@ -42,6 +43,6 @@ public class RESTConstants {
     public class ClioAPI {
         public final static String MATTERS_URL = "http://app.goclio.com/api/v2/matters";
         public final static String MATTER_URL = "http://app.goclio.com/api/v2/matters/%s";
-        public final static String MATTER_NOTE_URL = "https://app.goclio.com/api/v2/notes?regarding_type=Matter&regarding_id=%s";
+        public final static String MATTER_NOTE_URL = "https://app.goclio.com/api/v2/notes?regarding_type=Matter&regarding_id=%d";
     }
 }
