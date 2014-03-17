@@ -55,8 +55,9 @@ public class RESTService extends IntentService {
                     getAllNotesForMatter(matterId);
                 }
                 break;
+            case RESTConstants.RequestTypes.GET_NOTE_WITH_ID:
 
-
+                break;
             case RESTConstants.RequestTypes.POST_NEW_NOTE:
                 break;
 

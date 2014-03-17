@@ -38,6 +38,7 @@ public class ClioContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#", MATTER_ID);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#/" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/-1/" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#/" + NOTE_PATH + "/#", NOTE_ID_REGARDING_MATTER_ID);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/" + NOTE_PATH + "/#", NOTE_ID_REGARDING_MATTER_ID);
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/" + NOTE_PATH + "/-1", NOTE_ID_REGARDING_MATTER_ID);
     }
@@ -49,6 +50,10 @@ public class ClioContentProvider extends ContentProvider {
      */
     public static Uri getNotesUri(Long matterId) {
         return Uri.parse(String.format("content://%s/%s/%d/%s",AUTHORITY, MATTER_PATH, matterId, NOTE_PATH ));
+    }
+
+    public static Uri getNoteUri(Long matterId, Long noteId) {
+        return Uri.parse(String.format("content://%s/%s/%d/%s/%d",AUTHORITY, MATTER_PATH, matterId, NOTE_PATH, noteId ));
     }
 
     @Override

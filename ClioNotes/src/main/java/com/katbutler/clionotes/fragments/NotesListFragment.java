@@ -14,10 +14,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.katbutler.clionotes.R;
 import com.katbutler.clionotes.db.ClioContentProvider;
 import com.katbutler.clionotes.db.NoteCursorAdapter;
+import com.katbutler.clionotes.rest.RESTServiceHelper;
 
 /**
  * NotesListFragment is the listview to view list of {@link com.katbutler.clionotes.models.Note Notes}
@@ -69,6 +71,28 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
         return inflater.inflate(R.layout.notes_list_fragment, container, false);
     }
 
+    @Override
+    public void onListItemClick(ListView listView, View view, int position, long id) {
+        Long noteId = (Long) view.getTag();
+
+        if (noteId != null) {
+
+            NoteDetailFragment noteDetailFragment = new NoteDetailFragment();
+
+            Bundle args = new Bundle();
+            args.putLong(Constants.IntentExtrasKeys.MATTER_ID, getMatterId());
+            args.putLong(Constants.IntentExtrasKeys.NOTE_ID, noteId);
+            noteDetailFragment.setArguments(args);
+
+
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                    .replace(R.id.fragment_container, noteDetailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+        super.onListItemClick(listView, view, position, id);
+    }
 
     /**
      * Fill the notes list from the Cursor
@@ -124,7 +148,7 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
             NoteDetailFragment noteDetailFragment = new NoteDetailFragment();
 
             Bundle args = new Bundle();
-            args.putLong(ClioContentProvider.MattersTable.COLUMN_ID, getMatterId());
+            args.putLong(Constants.IntentExtrasKeys.MATTER_ID, getMatterId());
             noteDetailFragment.setArguments(args);
 
             getActivity().getSupportFragmentManager().beginTransaction()

@@ -65,7 +65,7 @@ public class MattersListFragment extends ListFragment implements LoaderManager.L
 
             Bundle args = new Bundle();
             args.putLong(ClioContentProvider.MattersTable.COLUMN_ID, matterId);
-            notesListFragment.setArguments(args); //now this fragment can get the user that was selected
+            notesListFragment.setArguments(args);
 
 
             getActivity().getSupportFragmentManager().beginTransaction()

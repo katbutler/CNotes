@@ -22,6 +22,7 @@ public class RESTConstants {
         public final static int GET_ALL_MATTERS = 100;
         public final static int GET_MATTER_WITH_ID = 101;
         public final static int GET_ALL_NOTES_FOR_MATTER = 102;
+        public final static int GET_NOTE_WITH_ID = 103;
 
         public final static int POST_NEW_NOTE = 200;
     }
@@ -34,6 +35,13 @@ public class RESTConstants {
         public final static String POST = "POST";
         public final static String PUT = "PUT";
         public final static String DELETE = "DELETE";
+    }
+
+    public class RESTStates {
+        public final static String POSTING = "POSTING";
+        public final static String PUTING = "PUTING";
+        public final static String DELETING = "DELETING";
+        public final static String GETTING = "GETTING";
     }
 
     /**
