@@ -101,7 +101,7 @@ public class RESTService extends IntentService {
                 if (resp == null)
                     return;
 
-                if(resp.getStatusCode() == 200) {
+                if(resp.getStatusCode() == RESTConstants.RESTStatusCodes.OK) {
                     Log.i("RSP", resp.getBody());
                     Gson gson = new Gson();
 
@@ -128,7 +128,7 @@ public class RESTService extends IntentService {
                 if (resp == null)
                     return;
 
-                if(resp.getStatusCode() == 200) {
+                if(resp.getStatusCode() == RESTConstants.RESTStatusCodes.OK) {
                     Log.i("RSP", resp.getBody());
                     Gson gson = new Gson();
 
@@ -155,7 +155,7 @@ public class RESTService extends IntentService {
                 if (resp == null)
                     return;
 
-                if(resp.getStatusCode() == 200) {
+                if(resp.getStatusCode() == RESTConstants.RESTStatusCodes.OK) {
                     Log.i("RSP", resp.getBody());
                     Gson gson = new Gson();
 
