@@ -93,7 +93,7 @@ public class RESTServiceHelper {
         Intent i = new Intent(context, RESTService.class);
 
         // Add required REST data to intent
-        i.putExtra(RESTConstants.IntentExtraKeys.REQUEST_TYPE, RESTConstants.RequestTypes.GET_ALL_NOTES_FOR_MATTER);
+        i.putExtra(RESTConstants.IntentExtraKeys.REQUEST_TYPE, RESTConstants.RequestTypes.POST_NEW_NOTE);
         i.putExtra(RESTConstants.IntentExtraKeys.MATTER_ID, matterId);
         i.putExtra(RESTConstants.IntentExtraKeys.NOTE_ID, noteId);
 

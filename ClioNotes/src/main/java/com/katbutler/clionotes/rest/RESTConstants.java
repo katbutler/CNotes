@@ -63,9 +63,9 @@ public class RESTConstants {
      * @see <a href="http://api-docs.goclio.com/v2/" >Clio API docs</a>
      */
     public class ClioAPI {
-        public final static String MATTERS_URL = "http://app.goclio.com/api/v2/matters";
-        public final static String MATTER_URL = "http://app.goclio.com/api/v2/matters/%s";
+        public final static String MATTERS_URL = "https://app.goclio.com/api/v2/matters";
+        public final static String MATTER_URL = "https://app.goclio.com/api/v2/matters/%s";
         public final static String MATTER_NOTE_URL = "https://app.goclio.com/api/v2/notes?regarding_type=Matter&regarding_id=%d";
-        public final static String NEW_NOTE_URL = "http://app.goclio.com/api/v2/notes";
+        public final static String NEW_NOTE_URL = "https://app.goclio.com/api/v2/notes";
     }
 }

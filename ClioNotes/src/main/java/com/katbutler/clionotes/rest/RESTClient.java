@@ -257,12 +257,16 @@ public class RESTClient {
                         // TODO implement a network POST request with RESTRequestData
                         HttpPost httpPost = new HttpPost(getUrl());
 
-                        if (getBody().length() > 0)
-                            httpPost.setEntity(new StringEntity(getBody()));
                         if (getQueryString().size() > 0)
                             httpPost.setParams(getBasicHttpQueryParamters());
                         if (getHeaders().size() > 0)
                             updateHeaders(httpPost);
+                        if (getBody().length() > 0) {
+                            StringEntity entity = new StringEntity(getBody(), "UTF-8");
+                            entity.setContentType("application/json");
+                            entity.setContentEncoding("UTF-8");
+                            httpPost.setEntity(entity);
+                        }
 
                         // Execute HTTP POST Request
                         return new RESTResponse(httpclient.execute(httpPost));

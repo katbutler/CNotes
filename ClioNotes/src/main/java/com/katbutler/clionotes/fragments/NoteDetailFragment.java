@@ -20,6 +20,7 @@ import android.widget.EditText;
 import com.katbutler.clionotes.ClioNotesActivity;
 import com.katbutler.clionotes.R;
 import com.katbutler.clionotes.db.ClioContentProvider;
+import com.katbutler.clionotes.db.ClioDatabaseQueryHelper;
 import com.katbutler.clionotes.fragments.common.BackPressedHandler;
 import com.katbutler.clionotes.models.Note;
 import com.katbutler.clionotes.rest.RESTConstants;
@@ -78,7 +79,7 @@ public class NoteDetailFragment extends Fragment {
         subjectEditText = (EditText) view.findViewById(R.id.subjectEditText);
         detailEditText = (EditText) view.findViewById(R.id.detailEditText);
 
-        Note note = getNoteWithId(getNoteId());
+        Note note = ClioDatabaseQueryHelper.getNoteWithId(getContentResolver(), getMatterId(), getNoteId());
 
         if (note != null) {
             subjectEditText.setText(note.getSubject());
@@ -179,37 +180,4 @@ public class NoteDetailFragment extends Fragment {
         return (getNoteId() < 0);
     }
 
-    /**
-     * Get the note from {@link com.katbutler.clionotes.db.ClioContentProvider} with noteId
-     * @param nId
-     * @return
-     */
-    private Note getNoteWithId(Long nId) {
-
-        if(nId >= 0) {
-            Note note = new Note();
-
-            String[] projection = new String[] {ClioContentProvider.NotesTable.COLUMN_ID,
-                                                ClioContentProvider.NotesTable.COLUMN_SUBJECT,
-                                                ClioContentProvider.NotesTable.COLUMN_DETAIL};
-
-            Uri uri = ClioContentProvider.getNoteUri(getNoteId());
-
-            Cursor cursor = getContentResolver().query(uri, projection, null, null, ClioContentProvider.NotesTable.COLUMN_ID + " ASC LIMIT 1");
-
-            if (cursor.moveToFirst()) {
-                Long id = cursor.getLong(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_ID));
-                String subject = cursor.getString(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_SUBJECT));
-                String detail = cursor.getString(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_DETAIL));
-
-                note.setId(id);
-                note.setSubject(subject);
-                note.setDetail(detail);
-            }
-
-            return note;
-        }
-
-        return null;
-    }
 }

@@ -198,8 +198,42 @@ public class ClioContentProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
-        return 0;
+    public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+        SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
+        int rowsDeleted = 0;
+
+
+        int uriType = sURIMatcher.match(uri);
+        long id = 0;
+        Uri returnUri = null;
+
+        switch (uriType) {
+            case MATTERS:
+                id = sqlDB.replace(MattersTable.TABLE_MATTER, null, values);
+                Uri.parse(MATTER_PATH + "/" + id);
+                break;
+            case MATTER_ID:
+                break;
+            case NOTES_REGARDING_MATTER_ID: // GET/POST
+                break;
+            case NOTE_ID: // GET/PUT
+                id = sqlDB.update(NotesTable.TABLE_NOTE, values, where, whereArgs);
+
+                if(values.containsKey(NotesTable.COLUMN_REST_STATE)) {
+                    if(values.getAsString(NotesTable.COLUMN_REST_STATE).equals(RESTConstants.RESTStates.PUTING)) {
+                        RESTServiceHelper.getInstance().createNote(Long.parseLong(uri.getPathSegments().get(1)), values.getAsLong(NotesTable.COLUMN_ID));
+                    }
+                }
+
+
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
+
+
+        getContext().getContentResolver().notifyChange(uri, null);
+        return 1;
     }
 
     private static long index = (new Date().getTime() * -1);

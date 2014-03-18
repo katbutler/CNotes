@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.katbutler.clionotes.db.ClioContentProvider;
+import com.katbutler.clionotes.models.ClioNote;
 import com.katbutler.clionotes.models.Matters;
 import com.katbutler.clionotes.models.Notes;
 
@@ -38,6 +39,24 @@ public class RESTProcessor {
 
     public void processNotesForMatter(Notes notes, Long matterId) {
         getContentResolver().bulkInsert( ClioContentProvider.getNotesUri(matterId), notes.getContentValues().toArray( new ContentValues[0] ) );
+    }
+
+
+    /**
+     * Process the newly created note.
+     * @param oldNoteId
+     * @param noteRsp
+     */
+    public void processCreatedNote(Long oldNoteId, ClioNote noteRsp) {
+
+        ContentValues values = new ContentValues();
+        values.put(ClioContentProvider.NotesTable.COLUMN_ID, noteRsp.getNote().getId());
+        values.put(ClioContentProvider.NotesTable.COLUMN_SUBJECT, noteRsp.getNote().getSubject());
+        values.put(ClioContentProvider.NotesTable.COLUMN_DETAIL, noteRsp.getNote().getDetail());
+        values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.NORMAL);
+
+        Uri uri = ClioContentProvider.getNoteUri(oldNoteId);
+        getContentResolver().update(uri, values, ClioContentProvider.NotesTable.COLUMN_ID + "=?", new String[] {oldNoteId.toString()});
     }
 
     /**
