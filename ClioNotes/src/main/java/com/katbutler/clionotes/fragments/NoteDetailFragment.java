@@ -130,7 +130,7 @@ public class NoteDetailFragment extends Fragment {
             values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.POSTING);
             getContentResolver().insert(uri, values);
         } else {
-            uri = ClioContentProvider.getNoteUri(getNoteId());
+            uri = ClioContentProvider.getNoteRegardMatterUri(getMatterId(), getNoteId());
             values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.PUTING);
             getContentResolver().update(uri, values, ClioContentProvider.NotesTable.COLUMN_ID+ "=?", new String[] {getNoteId().toString()});
         }

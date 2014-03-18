@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.katbutler.clionotes.db.ClioContentProvider;
+import com.katbutler.clionotes.db.ClioDatabaseQueryHelper;
 import com.katbutler.clionotes.models.ClioNote;
 import com.katbutler.clionotes.models.Matters;
+import com.katbutler.clionotes.models.Note;
 import com.katbutler.clionotes.models.Notes;
 
 /**
@@ -65,6 +67,12 @@ public class RESTProcessor {
 
         Uri uri = ClioContentProvider.getNoteUri(noteId);
         getContentResolver().update(uri, values, ClioContentProvider.NotesTable.COLUMN_ID+ "=?", new String[] {noteId.toString()});
+    }
+
+    public void processDeletedNote(Long noteId) {
+        Note note = ClioDatabaseQueryHelper.getNoteWithId(getContentResolver(), noteId);
+        Uri uri = ClioContentProvider.getNoteRegardMatterForceUri(note.getRegarding().getId(), noteId);
+        getContentResolver().delete(uri, ClioContentProvider.NotesTable.COLUMN_ID + "=?", new String[] {noteId.toString()});
     }
 
     /**

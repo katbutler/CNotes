@@ -114,4 +114,19 @@ public class RESTServiceHelper {
         context.startService(i);
     }
 
+    public void deleteNote(Long noteId) {
+        if (!isNetworkAvailable())
+            return;
+
+        // Create the intent for the RESTService
+        Intent i = new Intent(context, RESTService.class);
+
+        // Add required REST data to intent
+        i.putExtra(RESTConstants.IntentExtraKeys.REQUEST_TYPE, RESTConstants.RequestTypes.DELETE_NOTE);
+        i.putExtra(RESTConstants.IntentExtraKeys.NOTE_ID, noteId);
+
+        context.startService(i);
+
+    }
+
 }

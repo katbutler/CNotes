@@ -72,6 +72,11 @@ public class ClioNotesActivity extends ActionBarActivity {
     @Override
     public boolean onSupportNavigateUp() {
         getSupportFragmentManager().popBackStack();
+
+        for (BackPressedHandler handler : backPressedHandlers) {
+            handler.onBackPressed();
+        }
+
         return super.onSupportNavigateUp();
     }
 }

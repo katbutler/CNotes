@@ -200,7 +200,6 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
         Uri uri = ClioContentProvider.getNoteUri(noteId);
         getContentResolver().delete(uri, null, null);
 
-
     }
 
     private Long getMatterId() {

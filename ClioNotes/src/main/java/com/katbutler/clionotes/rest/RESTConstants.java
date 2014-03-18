@@ -72,5 +72,6 @@ public class RESTConstants {
         public final static String MATTER_NOTE_URL = "https://app.goclio.com/api/v2/notes?regarding_type=Matter&regarding_id=%d";
         public final static String NEW_NOTE_URL = "https://app.goclio.com/api/v2/notes";
         public final static String UPDATE_NOTE_URL = "https://app.goclio.com/api/v2/notes/%d";
+        public final static String DELETE_NOTE_URL = "https://app.goclio.com/api/v2/notes/%d";
     }
 }

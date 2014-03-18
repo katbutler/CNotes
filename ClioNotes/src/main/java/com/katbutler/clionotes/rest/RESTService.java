@@ -78,7 +78,12 @@ public class RESTService extends IntentService {
                 updateNote(noteId);
 
                 break;
+            case RESTConstants.RequestTypes.DELETE_NOTE:
+                noteId = intent.getLongExtra(RESTConstants.IntentExtraKeys.NOTE_ID, -1);
 
+                deleteNote(noteId);
+
+                break;
             default:
                 //TODO throw exception
                 stopSelf();
@@ -158,6 +163,27 @@ public class RESTService extends IntentService {
                     //TODO ACTUALLY handle response. toast?
                 } else if (resp.getStatusCode() == RESTConstants.RESTStatusCodes.RECORD_NOT_FOUND) {
                     Log.i("RECORD NOT FOUND", resp.getBody());
+                }
+            }
+        }).start();
+    }
+
+    public void deleteNote(final Long noteId) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                RESTClient.RESTResponse resp = RESTClient.url(String.format(RESTConstants.ClioAPI.DELETE_NOTE_URL, noteId))
+                        .withHeader("Authorization", "Bearer Xzd7LAtiZZ6HBBjx0DVRqalqN8yjvXgzY5qaD15a")
+                        .delete();
+
+                if (resp == null)
+                    return;
+
+                if (resp.getStatusCode() == RESTConstants.RESTStatusCodes.OK) {
+                    new RESTProcessor().processDeletedNote(noteId);
+                } else if (resp.getStatusCode() == RESTConstants.RESTStatusCodes.RECORD_NOT_FOUND) {
+                    //TODO a toast to say Record Not Found to delete
                 }
             }
         }).start();
