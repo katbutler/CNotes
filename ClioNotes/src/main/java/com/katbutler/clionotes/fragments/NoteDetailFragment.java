@@ -3,6 +3,7 @@ package com.katbutler.clionotes.fragments;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,10 +14,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.katbutler.clionotes.ClioNotesActivity;
 import com.katbutler.clionotes.R;
 import com.katbutler.clionotes.db.ClioContentProvider;
+import com.katbutler.clionotes.fragments.common.BackPressedHandler;
 import com.katbutler.clionotes.models.Note;
 import com.katbutler.clionotes.rest.RESTConstants;
 
@@ -30,6 +34,7 @@ public class NoteDetailFragment extends Fragment {
     private Long matterId = -1l;
     private Long noteId = ClioContentProvider.createNewIndex();
 
+    private BackPressedHandler backPressedHandler;
 
     private EditText subjectEditText;
     private EditText detailEditText;
@@ -38,9 +43,22 @@ public class NoteDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //TODO initialize fragment
+        backPressedHandler = new BackPressedHandler() {
+            @Override
+            public void onBackPressed() {
+                hideKeyboard();
+            }
+        };
+
+
+        ((ClioNotesActivity)getActivity()).addBackPressedHandler(backPressedHandler);
     }
 
+    @Override
+    public void onDestroy() {
+        ((ClioNotesActivity)getActivity()).removeBackPressedHandler(backPressedHandler);
+        super.onDestroy();
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -110,13 +128,24 @@ public class NoteDetailFragment extends Fragment {
             uri = ClioContentProvider.getNotesUri(getMatterId());
             values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.POSTING);
         } else {
-            uri = ClioContentProvider.getNoteUri(getMatterId(), getNoteId());
+            uri = ClioContentProvider.getNoteUri(getNoteId());
             values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.PUTING);
         }
 
         getContentResolver().insert(uri, values);
 
+        hideKeyboard();
+
         getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+    /**
+     * Hide the keyboard if it is open
+     */
+    private void hideKeyboard() {
+        // hide keyboard after hitting save
+        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(detailEditText.getWindowToken(), 0);
     }
 
     private ContentResolver getContentResolver() {
@@ -164,7 +193,7 @@ public class NoteDetailFragment extends Fragment {
                                                 ClioContentProvider.NotesTable.COLUMN_SUBJECT,
                                                 ClioContentProvider.NotesTable.COLUMN_DETAIL};
 
-            Uri uri = ClioContentProvider.getNoteUri(getMatterId(), getNoteId());
+            Uri uri = ClioContentProvider.getNoteUri(getNoteId());
 
             Cursor cursor = getContentResolver().query(uri, projection, null, null, ClioContentProvider.NotesTable.COLUMN_ID + " ASC LIMIT 1");
 

@@ -1,6 +1,9 @@
 package com.katbutler.clionotes.fragments;
 
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +18,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -22,6 +27,7 @@ import android.widget.Toast;
 import com.katbutler.clionotes.R;
 import com.katbutler.clionotes.db.ClioContentProvider;
 import com.katbutler.clionotes.db.NoteCursorAdapter;
+import com.katbutler.clionotes.rest.RESTConstants;
 import com.katbutler.clionotes.rest.RESTServiceHelper;
 
 /**
@@ -107,7 +113,6 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
     private void fillData() {
 
         getLoaderManager().initLoader(0, null, this);
-//        getActivity().getSupportLoaderManager().initLoader(0, null, this);
         adapter = new NoteCursorAdapter(this.getActivity(), null);
 
         setListAdapter(adapter);
@@ -119,8 +124,11 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        Long noteId = (Long) v.getTag();
-        tmpNoteId = noteId;
+        // For some reason v is the listview not the rows view.
+        // This is how we can get the target row view to get the note id from it
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+
+        tmpNoteId = (Long) info.targetView.getTag();
 
         menu.add(0, Menu.NONE, 0, "Delete");
     }
@@ -129,7 +137,7 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if (item.getTitle().equals("Delete")) {
-            deleteNote();
+            deleteNote(tmpNoteId);
         }
         return super.onContextItemSelected(item);
     }
@@ -187,12 +195,19 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
         }
     }
 
-    public void deleteNote() {
-        //TODO delete note from local database and send delete request to clio
-        //TODO delete using tmpNoteId
+    public void deleteNote(Long noteId) {
+
+        Uri uri = ClioContentProvider.getNoteUri(noteId);
+        getContentResolver().delete(uri, null, null);
+
+
     }
 
     private Long getMatterId() {
         return matterId;
+    }
+
+    private ContentResolver getContentResolver() {
+        return getActivity().getContentResolver();
     }
 }

@@ -1,25 +1,20 @@
 package com.katbutler.clionotes;
 
-import android.content.ContentValues;
-import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 
-import com.katbutler.clionotes.db.ClioContentProvider;
 import com.katbutler.clionotes.fragments.MattersListFragment;
-import com.katbutler.clionotes.models.Matter;
-import com.katbutler.clionotes.rest.RESTService;
+import com.katbutler.clionotes.fragments.common.BackPressedHandler;
 import com.katbutler.clionotes.rest.RESTServiceHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ClioNotesActivity extends ActionBarActivity {
+
+    // Handlers for the back button pressed event
+    private List<BackPressedHandler> backPressedHandlers = new ArrayList<BackPressedHandler>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +32,30 @@ public class ClioNotesActivity extends ActionBarActivity {
 
     }
 
+
+    @Override
+    public void onBackPressed() {
+        for (BackPressedHandler handler : backPressedHandlers) {
+            handler.onBackPressed();
+        }
+        super.onBackPressed();
+    }
+
+    /**
+     * Add a BackPressedHandler to listen to back pressed events
+     * @param handler
+     */
+    public void addBackPressedHandler(BackPressedHandler handler) {
+        backPressedHandlers.add(handler);
+    }
+
+    /**
+     * Removed the BackPressedHandler that was added.
+     * @param handler
+     */
+    public void removeBackPressedHandler(BackPressedHandler handler) {
+        backPressedHandlers.remove(handler);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

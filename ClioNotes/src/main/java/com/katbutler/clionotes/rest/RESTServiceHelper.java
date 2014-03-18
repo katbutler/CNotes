@@ -53,6 +53,9 @@ public class RESTServiceHelper {
      * Start a service to request all {@link Matter Matters}
      */
     public void fetchMatters() {
+        if (!isNetworkAvailable())
+            return;
+
         // Create the intent for the RESTService
         Intent i = new Intent(context, RESTService.class);
 
@@ -69,6 +72,9 @@ public class RESTServiceHelper {
      * @param id the id of the {@link Matter} we are trying to fetch
      */
     public void fetchNotesForMatter(Long id) {
+        if (!isNetworkAvailable())
+            return;
+
         // Create the intent for the RESTService
         Intent i = new Intent(context, RESTService.class);
 
@@ -80,6 +86,9 @@ public class RESTServiceHelper {
     }
 
     public void createNote(Long matterId, Long noteId) {
+        if (!isNetworkAvailable())
+            return;
+
         // Create the intent for the RESTService
         Intent i = new Intent(context, RESTService.class);
 

@@ -9,9 +9,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:paddingLeft="10dp"
+        android:paddingBottom="10dp"
         android:lines="1"
         android:text="@+id/TextView01"
-        android:textSize="24dp">
+        android:textAppearance="@android:style/TextAppearance.Large">
     </TextView>
 
 </LinearLayout>

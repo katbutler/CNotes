@@ -9,13 +9,10 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
-import com.katbutler.clionotes.fragments.Constants;
 import com.katbutler.clionotes.rest.RESTConstants;
 import com.katbutler.clionotes.rest.RESTServiceHelper;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 
 /**
  * ClioContentProvider provides content for cached data from Clio
@@ -28,11 +25,13 @@ public class ClioContentProvider extends ContentProvider {
     private static final int MATTERS = 10;
     private static final int MATTER_ID = 20;
     private static final int NOTES_REGARDING_MATTER_ID = 30;
-    private static final int NOTE_ID_REGARDING_MATTER_ID = 40;
+    private static final int NOTE_ID = 40;
+    private static final int NOTE_FORCE_ID = 50;
 
     private static final String AUTHORITY = "com.katbutler.provider.clionotes";
     private static final String MATTER_PATH = "matter";
     private static final String NOTE_PATH = "note";
+    private static final String FORCE_PATH = "force";
 
     //public URI to my data
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + MATTER_PATH);
@@ -40,16 +39,17 @@ public class ClioContentProvider extends ContentProvider {
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
         sURIMatcher.addURI(AUTHORITY, MATTER_PATH, MATTERS);
-        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#", MATTER_ID);
-        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#/" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
-        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/-#/" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
-        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/#/" + NOTE_PATH + "/#", NOTE_ID_REGARDING_MATTER_ID);
-        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/" + NOTE_PATH + "/#", NOTE_ID_REGARDING_MATTER_ID);
-        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/" + NOTE_PATH + "/-#", NOTE_ID_REGARDING_MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/*", MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, MATTER_PATH + "/*/" + NOTE_PATH, NOTES_REGARDING_MATTER_ID);
+        sURIMatcher.addURI(AUTHORITY, NOTE_PATH + "/*", NOTE_ID);
+        sURIMatcher.addURI(AUTHORITY, NOTE_PATH + "/*/" + FORCE_PATH, NOTE_FORCE_ID);
     }
 
     /**
-     * Helper mathod to create Uri for Notes path
+     * Helper method to create Uri for Notes path
+     * /matter/#/note
+     * GET ALL NOTES FOR MATTER, CREATE NOTE
+     *
      * @param matterId
      * @return
      */
@@ -57,8 +57,28 @@ public class ClioContentProvider extends ContentProvider {
         return Uri.parse(String.format("content://%s/%s/%d/%s",AUTHORITY, MATTER_PATH, matterId, NOTE_PATH ));
     }
 
-    public static Uri getNoteUri(Long matterId, Long noteId) {
-        return Uri.parse(String.format("content://%s/%s/%d/%s/%d",AUTHORITY, MATTER_PATH, matterId, NOTE_PATH, noteId ));
+    /**
+     * Helper method to create Uri for single note path
+     * /note/#
+     * FAKE DELETE, GET NOTE, UPDATE NOTE
+     *
+     * @param noteId
+     * @return
+     */
+    public static Uri getNoteUri(Long noteId) {
+        return Uri.parse(String.format("content://%s/%s/%d",AUTHORITY, NOTE_PATH, noteId ));
+    }
+
+    /**
+     * Helper method to create Uri for deleting after response from clio
+     * /note/#/force
+     * DELETE FORCED
+     *
+     * @param noteId
+     * @return
+     */
+    public static Uri getNoteForceUri(Long noteId) {
+        return Uri.parse(String.format("content://%s/%s/%d/%s",AUTHORITY, NOTE_PATH, noteId, FORCE_PATH ));
     }
 
     @Override
@@ -86,8 +106,10 @@ public class ClioContentProvider extends ContentProvider {
             case NOTES_REGARDING_MATTER_ID:
                 queryBuilder.setTables(NotesTable.TABLE_NOTE);
                 queryBuilder.appendWhere(NotesTable.COLUMN_MATTER_ID_FK + "=" + uri.getPathSegments().get(1));
+//                queryBuilder.appendWhere(" AND ");
+//                queryBuilder.appendWhere(NotesTable.COLUMN_REST_STATE + "!='" + RESTConstants.RESTStates.DELETING + "'"); // Must add so we do not see the ones currently being deleted
                 break;
-            case NOTE_ID_REGARDING_MATTER_ID:
+            case NOTE_ID:
                 queryBuilder.setTables(NotesTable.TABLE_NOTE);
                 queryBuilder.appendWhere(NotesTable.COLUMN_ID + "=" + uri.getLastPathSegment());
                 break;
@@ -140,7 +162,7 @@ public class ClioContentProvider extends ContentProvider {
                 }
 
                 break;
-            case NOTE_ID_REGARDING_MATTER_ID: // GET/PUT
+            case NOTE_ID: // GET/PUT
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -152,8 +174,27 @@ public class ClioContentProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
-        return 0;
+    public int delete(Uri uri, String where, String[] selectionArgs) {
+
+        SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
+        int uriType = sURIMatcher.match(uri);
+
+        switch (uriType) {
+            case NOTE_ID:
+                ContentValues values = new ContentValues();
+                values.put(NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.DELETING);
+                String[] whereArgs = new String[] {uri.getLastPathSegment()};
+                sqlDB.update(NotesTable.TABLE_NOTE, values, NotesTable.COLUMN_ID + " = ?", whereArgs);
+                // TODO REST call to clio to delete resource
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return 1;
+
     }
 
     @Override
