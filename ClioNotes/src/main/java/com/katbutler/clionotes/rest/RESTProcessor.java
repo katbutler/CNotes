@@ -19,13 +19,23 @@ import com.katbutler.clionotes.models.Notes;
  */
 public class RESTProcessor {
 
+    /**
+     * The Context to run commands on
+     */
     private Context context;
 
+    /**
+     * Create a {@link RESTProcessor} that uses the same context as the RESTServiceHelper
+     */
     public RESTProcessor() {
         context = RESTServiceHelper.getInstance().getContext();
     }
 
 
+    /**
+     * Process the GET request for all {@link com.katbutler.clionotes.models.Matter Matters} for this user.
+     * @param matters
+     */
     public void processMatters(Matters matters) {
 //
 //        for (Matter matter : matters.getMatters()) {
@@ -39,6 +49,11 @@ public class RESTProcessor {
         getContentResolver().bulkInsert( ClioContentProvider.CONTENT_URI, matters.getContentValues().toArray( new ContentValues[0] ) );
     }
 
+    /**
+     * Process the GET request for all {@link Note Notes} regarding a {@link com.katbutler.clionotes.models.Matter}
+     * @param notes
+     * @param matterId
+     */
     public void processNotesForMatter(Notes notes, Long matterId) {
         getContentResolver().bulkInsert( ClioContentProvider.getNotesUri(matterId), notes.getContentValues().toArray( new ContentValues[0] ) );
     }
@@ -61,6 +76,11 @@ public class RESTProcessor {
         getContentResolver().update(uri, values, ClioContentProvider.NotesTable.COLUMN_ID + "=?", new String[] {oldNoteId.toString()});
     }
 
+    /**
+     * Process the Clio update note response.
+     * @param noteId
+     * @param noteRsp
+     */
     public void processUpdatedNote(Long noteId, ClioNote noteRsp) {
         ContentValues values = new ContentValues();
         values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.NORMAL);
@@ -69,10 +89,14 @@ public class RESTProcessor {
         getContentResolver().update(uri, values, ClioContentProvider.NotesTable.COLUMN_ID+ "=?", new String[] {noteId.toString()});
     }
 
+    /**
+     * Process the deleted note
+     * @param noteId
+     */
     public void processDeletedNote(Long noteId) {
         Note note = ClioDatabaseQueryHelper.getNoteWithId(getContentResolver(), noteId);
         Uri uri = ClioContentProvider.getNoteRegardMatterForceUri(note.getRegarding().getId(), noteId);
-        getContentResolver().delete(uri, ClioContentProvider.NotesTable.COLUMN_ID + "=?", new String[] {noteId.toString()});
+        getContentResolver().delete(uri, ClioContentProvider.NotesTable.COLUMN_ID + "=?", new String[]{noteId.toString()});
     }
 
     /**

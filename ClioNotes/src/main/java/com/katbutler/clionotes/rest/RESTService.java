@@ -21,25 +21,23 @@ public class RESTService extends IntentService {
         super("RESTService");
     }
 
+    /**
+     * Do service startup tasks. Do things that need to be done before the service is officially started
+     */
     @Override
     public void onCreate() {
-        // TODO do service startup tasks. Do things that need to be done before the service is officially started
         super.onCreate();
     }
 
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId) {
-//        // TODO Setup Service Command
-//        onHandleIntent(intent);
-//        return Service.START_NOT_STICKY;
-//    }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        // TODO create a Binder implementation to allow communication to this Service from the RESTServiceHelper
-        return null;
-    }
-
+    /**
+     * Handle an incoming intent. The Intent should have a {@link com.katbutler.clionotes.rest.RESTConstants.RequestTypes}
+     * added as an IntExtra so the {@link com.katbutler.clionotes.rest.RESTService} knows what
+     * REST Request to make to Clio.
+     *
+     * @throws java.lang.RuntimeException when using invalid {@link com.katbutler.clionotes.rest.RESTConstants.RequestTypes}
+     * @param intent Intent used to start a Clio REST request
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
         // Handle the intent
@@ -85,12 +83,15 @@ public class RESTService extends IntentService {
 
                 break;
             default:
-                //TODO throw exception
-                stopSelf();
-                break;
+                throw new RuntimeException("Invalid RequestType. Cannot make REST request.");
         }
     }
 
+    /**
+     * Run the REST POST request to create a new {@link Note} for the given {@link com.katbutler.clionotes.models.Matter}
+     * @param matterId
+     * @param noteId
+     */
     private void createNewNoteForMatter(final Long matterId, final Long noteId) {
         new Thread(new Runnable() {
             @Override
@@ -129,6 +130,10 @@ public class RESTService extends IntentService {
         }).start();
     }
 
+    /**
+     * Run the PUT request to update a {@link Note} with changes.
+     * @param noteId
+     */
     public void updateNote(final Long noteId) {
         new Thread(new Runnable() {
             @Override
@@ -168,6 +173,10 @@ public class RESTService extends IntentService {
         }).start();
     }
 
+    /**
+     * Run the DELETE request to delete a {@link Note} from the Clio server.
+     * @param noteId
+     */
     public void deleteNote(final Long noteId) {
         new Thread(new Runnable() {
             @Override
@@ -189,6 +198,10 @@ public class RESTService extends IntentService {
         }).start();
     }
 
+    /**
+     * Run the REST request to get all the {@link com.katbutler.clionotes.models.Matter Matters} for
+     * the User.
+     */
     public void getAllMatters() {
         new Thread(new Runnable() {
             @Override
@@ -216,6 +229,10 @@ public class RESTService extends IntentService {
         }).start();
     }
 
+    /**
+     * Run the REST request for all {@link Note Notes} regarding a {@link Matter}
+     * @param matterId The ID for Matter we are getting notes for
+     */
     public void getAllNotesForMatter(final Long matterId) {
         new Thread(new Runnable() {
             @Override
@@ -242,4 +259,6 @@ public class RESTService extends IntentService {
             }
         }).start();
     }
+
+
 }

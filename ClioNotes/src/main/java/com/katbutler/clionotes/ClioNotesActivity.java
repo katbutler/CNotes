@@ -16,6 +16,10 @@ public class ClioNotesActivity extends ActionBarActivity {
     // Handlers for the back button pressed event
     private List<BackPressedHandler> backPressedHandlers = new ArrayList<BackPressedHandler>();
 
+    /**
+     * onCreate Activity event. Setup main fragment and Service Helper context
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +37,10 @@ public class ClioNotesActivity extends ActionBarActivity {
     }
 
 
+    /**
+     * Handle when back button is pressed. Also notify
+     * all observers of this event.
+     */
     @Override
     public void onBackPressed() {
         for (BackPressedHandler handler : backPressedHandlers) {
@@ -57,18 +65,10 @@ public class ClioNotesActivity extends ActionBarActivity {
         backPressedHandlers.remove(handler);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-        return super.onOptionsItemSelected(item);
-    }
-
+    /**
+     * Handle when the Navigate Up is pressed
+     * @return
+     */
     @Override
     public boolean onSupportNavigateUp() {
         getSupportFragmentManager().popBackStack();

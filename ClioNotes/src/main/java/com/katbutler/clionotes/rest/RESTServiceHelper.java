@@ -38,10 +38,18 @@ public class RESTServiceHelper {
         return context;
     }
 
+    /**
+     * Set the context to run the commands on
+     * @param context
+     */
     public void setContext(Context context) {
         this.context = context;
     }
 
+    /**
+     * Check the Android system to see if the Network is available
+     * @return
+     */
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -85,6 +93,11 @@ public class RESTServiceHelper {
         context.startService(i);
     }
 
+    /**
+     * Start the RESTService in the background to create a new note
+     * @param matterId The ID of the matter to create a new note for
+     * @param noteId The temp negative ID of the note in the local database
+     */
     public void createNote(Long matterId, Long noteId) {
         if (!isNetworkAvailable())
             return;
@@ -100,6 +113,10 @@ public class RESTServiceHelper {
         context.startService(i);
     }
 
+    /**
+     * Start the RESTService in the background to update a note
+     * @param noteId The ID of the note to update
+     */
     public void updateNote(Long noteId) {
         if (!isNetworkAvailable())
             return;
@@ -114,6 +131,10 @@ public class RESTServiceHelper {
         context.startService(i);
     }
 
+    /**
+     * Start the RESTService in the background to delete a note
+     * @param noteId The ID of the note to delete from Clio
+     */
     public void deleteNote(Long noteId) {
         if (!isNetworkAvailable())
             return;
