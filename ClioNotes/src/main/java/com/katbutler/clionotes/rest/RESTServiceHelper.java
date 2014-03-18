@@ -100,4 +100,18 @@ public class RESTServiceHelper {
         context.startService(i);
     }
 
+    public void updateNote(Long noteId) {
+        if (!isNetworkAvailable())
+            return;
+
+        // Create the intent for the RESTService
+        Intent i = new Intent(context, RESTService.class);
+
+        // Add required REST data to intent
+        i.putExtra(RESTConstants.IntentExtraKeys.REQUEST_TYPE, RESTConstants.RequestTypes.PUT_NOTE);
+        i.putExtra(RESTConstants.IntentExtraKeys.NOTE_ID, noteId);
+
+        context.startService(i);
+    }
+
 }

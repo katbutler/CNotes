@@ -59,6 +59,14 @@ public class RESTProcessor {
         getContentResolver().update(uri, values, ClioContentProvider.NotesTable.COLUMN_ID + "=?", new String[] {oldNoteId.toString()});
     }
 
+    public void processUpdatedNote(Long noteId, ClioNote noteRsp) {
+        ContentValues values = new ContentValues();
+        values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.NORMAL);
+
+        Uri uri = ClioContentProvider.getNoteUri(noteId);
+        getContentResolver().update(uri, values, ClioContentProvider.NotesTable.COLUMN_ID+ "=?", new String[] {noteId.toString()});
+    }
+
     /**
      * Helper method to get the Content Resolver from the context
      * @return

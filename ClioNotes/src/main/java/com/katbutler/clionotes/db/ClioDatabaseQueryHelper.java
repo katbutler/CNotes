@@ -14,13 +14,14 @@ public class ClioDatabaseQueryHelper {
      * @param noteId
      * @return
      */
-    public static Note getNoteWithId(ContentResolver contentResolver, Long matterId, Long noteId) {
+    public static Note getNoteWithId(ContentResolver contentResolver, Long noteId) {
 
         Note note = null;
 
         String[] projection = new String[] {ClioContentProvider.NotesTable.COLUMN_ID,
                 ClioContentProvider.NotesTable.COLUMN_SUBJECT,
-                ClioContentProvider.NotesTable.COLUMN_DETAIL};
+                ClioContentProvider.NotesTable.COLUMN_DETAIL,
+                ClioContentProvider.NotesTable.COLUMN_MATTER_ID_FK};
 
         Uri uri = ClioContentProvider.getNoteUri(noteId);
 
@@ -31,6 +32,7 @@ public class ClioDatabaseQueryHelper {
             Long id = cursor.getLong(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_ID));
             String subject = cursor.getString(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_SUBJECT));
             String detail = cursor.getString(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_DETAIL));
+            Long matterId = cursor.getLong(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_MATTER_ID_FK));
 
             note.setId(id);
             note.setSubject(subject);

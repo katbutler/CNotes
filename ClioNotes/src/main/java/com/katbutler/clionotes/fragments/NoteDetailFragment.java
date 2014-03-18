@@ -79,7 +79,7 @@ public class NoteDetailFragment extends Fragment {
         subjectEditText = (EditText) view.findViewById(R.id.subjectEditText);
         detailEditText = (EditText) view.findViewById(R.id.detailEditText);
 
-        Note note = ClioDatabaseQueryHelper.getNoteWithId(getContentResolver(), getMatterId(), getNoteId());
+        Note note = ClioDatabaseQueryHelper.getNoteWithId(getContentResolver(), getNoteId());
 
         if (note != null) {
             subjectEditText.setText(note.getSubject());
@@ -128,12 +128,12 @@ public class NoteDetailFragment extends Fragment {
         if (isNewNote()) {
             uri = ClioContentProvider.getNotesUri(getMatterId());
             values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.POSTING);
+            getContentResolver().insert(uri, values);
         } else {
             uri = ClioContentProvider.getNoteUri(getNoteId());
             values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.PUTING);
+            getContentResolver().update(uri, values, ClioContentProvider.NotesTable.COLUMN_ID+ "=?", new String[] {getNoteId().toString()});
         }
-
-        getContentResolver().insert(uri, values);
 
         hideKeyboard();
 

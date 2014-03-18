@@ -26,6 +26,10 @@ public class RESTConstants {
         public final static int GET_NOTE_WITH_ID = 103;
 
         public final static int POST_NEW_NOTE = 200;
+
+        public final static int PUT_NOTE = 300;
+
+        public final static int DELETE_NOTE = 400;
     }
 
     /**
@@ -67,5 +71,6 @@ public class RESTConstants {
         public final static String MATTER_URL = "https://app.goclio.com/api/v2/matters/%s";
         public final static String MATTER_NOTE_URL = "https://app.goclio.com/api/v2/notes?regarding_type=Matter&regarding_id=%d";
         public final static String NEW_NOTE_URL = "https://app.goclio.com/api/v2/notes";
+        public final static String UPDATE_NOTE_URL = "https://app.goclio.com/api/v2/notes/%d";
     }
 }

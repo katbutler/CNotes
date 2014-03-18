@@ -72,6 +72,12 @@ public class RESTService extends IntentService {
                 }
 
                 break;
+            case RESTConstants.RequestTypes.PUT_NOTE:
+                noteId = intent.getLongExtra(RESTConstants.IntentExtraKeys.NOTE_ID, -1);
+
+                updateNote(noteId);
+
+                break;
 
             default:
                 //TODO throw exception
@@ -85,7 +91,7 @@ public class RESTService extends IntentService {
             @Override
             public void run() {
 
-                Note note = ClioDatabaseQueryHelper.getNoteWithId(getContentResolver(), matterId, noteId);
+                Note note = ClioDatabaseQueryHelper.getNoteWithId(getContentResolver(), noteId);
                 note.setId(null); //clear negative ID
 
                 ClioNote clioNote = new ClioNote(note);
@@ -114,6 +120,45 @@ public class RESTService extends IntentService {
                     Log.i("BAD RESPONSE", resp.getBody());
                 }
                 //TODO handle other HTTP status codes
+            }
+        }).start();
+    }
+
+    public void updateNote(final Long noteId) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                Note note = ClioDatabaseQueryHelper.getNoteWithId(getContentResolver(), noteId);
+
+                ClioNote clioNote = new ClioNote(note);
+
+                String body = new Gson().toJson(clioNote);
+
+                RESTClient.RESTResponse resp = RESTClient.url(String.format(RESTConstants.ClioAPI.UPDATE_NOTE_URL, noteId))
+                        .withHeader("Authorization", "Bearer Xzd7LAtiZZ6HBBjx0DVRqalqN8yjvXgzY5qaD15a")
+                        .withHeader("Accept", "application/json")
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(body)
+                        .put();
+
+                // Response is null when no network contection
+                if (resp == null)
+                    return;
+
+                if (resp.getStatusCode() == RESTConstants.RESTStatusCodes.OK) {
+                    Log.i("RSP", resp.getBody());
+                    Gson gson = new Gson();
+
+                    ClioNote noteRsp = gson.fromJson(resp.getBody(), ClioNote.class);
+                    // TODO pass the note response and old noteId to the processor
+                    new RESTProcessor().processUpdatedNote(noteId, noteRsp);
+                } else if (resp.getStatusCode() == RESTConstants.RESTStatusCodes.BAD_REQUEST) {
+                    Log.i("BAD RESPONSE", resp.getBody());
+                    //TODO ACTUALLY handle response. toast?
+                } else if (resp.getStatusCode() == RESTConstants.RESTStatusCodes.RECORD_NOT_FOUND) {
+                    Log.i("RECORD NOT FOUND", resp.getBody());
+                }
             }
         }).start();
     }

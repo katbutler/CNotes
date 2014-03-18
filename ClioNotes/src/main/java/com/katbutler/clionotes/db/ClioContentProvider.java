@@ -221,7 +221,7 @@ public class ClioContentProvider extends ContentProvider {
 
                 if(values.containsKey(NotesTable.COLUMN_REST_STATE)) {
                     if(values.getAsString(NotesTable.COLUMN_REST_STATE).equals(RESTConstants.RESTStates.PUTING)) {
-                        RESTServiceHelper.getInstance().createNote(Long.parseLong(uri.getPathSegments().get(1)), values.getAsLong(NotesTable.COLUMN_ID));
+                        RESTServiceHelper.getInstance().updateNote(values.getAsLong(NotesTable.COLUMN_ID));
                     }
                 }
 
@@ -236,14 +236,13 @@ public class ClioContentProvider extends ContentProvider {
         return 1;
     }
 
-    private static long index = (new Date().getTime() * -1);
 
     /**
      * Create a new unique id for new object before they are posted to Clio server
      * @return
      */
     public static long createNewIndex() {
-        return --index;
+        return (new Date().getTime() * -1);
     }
 
 
