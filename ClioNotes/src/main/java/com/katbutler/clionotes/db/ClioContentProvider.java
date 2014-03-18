@@ -136,8 +136,10 @@ public class ClioContentProvider extends ContentProvider {
             case NOTES_REGARDING_MATTER_ID:
                 queryBuilder.setTables(NotesTable.TABLE_NOTE);
                 queryBuilder.appendWhere(NotesTable.COLUMN_MATTER_ID_FK + "=" + uri.getPathSegments().get(1));
-//                queryBuilder.appendWhere(" AND ");
-//                queryBuilder.appendWhere(NotesTable.COLUMN_REST_STATE + "!='" + RESTConstants.RESTStates.DELETING + "'"); // Must add so we do not see the ones currently being deleted
+                queryBuilder.appendWhere(") AND ((");
+                // (rest_state ISNULL) OR (rest_state NOT LIKE 'DELETING');
+                queryBuilder.appendWhere(NotesTable.COLUMN_REST_STATE + " ISNULL) OR (");
+                queryBuilder.appendWhere(NotesTable.COLUMN_REST_STATE + " NOT LIKE '" + RESTConstants.RESTStates.DELETING + "')"); // Must add so we do not see the ones currently being deleted
                 break;
             case NOTE_ID:
                 queryBuilder.setTables(NotesTable.TABLE_NOTE);
