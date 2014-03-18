@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="actionbar_text">#FFFFFF</color>
-    <color name="actionbar_background">#2E2E2E</color>
+    <color name="actionbar_text">#444444</color>
+    <color name="actionbar_background">#F1D859</color>
     <color name="clio_yellow">#F1D859</color>
+    <color name="clio_grey">#858585</color>
 </resources>

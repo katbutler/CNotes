@@ -10,11 +10,11 @@
     <style name="CustomActionBarTheme"
         parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:actionMenuTextColor">@color/actionbar_text</item>
 
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/MyActionBar</item>
-        <item name="android:actionMenuTextColor">@color/actionbar_text</item>
-
+        <item name="homeAsUpIndicator">@drawable/ic_action_previous_item</item>
     </style>
 
     <!-- ActionBar styles -->
