@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Subject: "
+        android:text="@string/subject_title"
         android:id="@+id/subjectTextView" />
 
     <EditText
@@ -19,11 +19,28 @@
         android:id="@+id/subjectEditText" />
 
     <TextView
-        android:paddingTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Detail: "
+        android:paddingTop="20dp"
+        android:text="@string/date_title"
+        android:id="@+id/dateTextView" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        android:hint="yyyy-mm-dd"
+        android:ems="10"
+        android:id="@+id/dateEditText"
+        android:editable="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:paddingTop="20dp"
+        android:text="@string/detail_title"
         android:id="@+id/detailTextView" />
 
     <EditText

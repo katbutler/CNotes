@@ -70,9 +70,12 @@ public class RESTProcessor {
         values.put(ClioContentProvider.NotesTable.COLUMN_ID, noteRsp.getNote().getId());
         values.put(ClioContentProvider.NotesTable.COLUMN_SUBJECT, noteRsp.getNote().getSubject());
         values.put(ClioContentProvider.NotesTable.COLUMN_DETAIL, noteRsp.getNote().getDetail());
+        values.put(ClioContentProvider.NotesTable.COLUMN_DATE, noteRsp.getNote().getDate());
         values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.NORMAL);
 
-        Uri uri = ClioContentProvider.getNoteUri(oldNoteId);
+        Long matterId = noteRsp.getNote().getRegarding().getId();
+
+        Uri uri = ClioContentProvider.getNoteRegardMatterUri(matterId, noteRsp.getNote().getId());
         getContentResolver().update(uri, values, ClioContentProvider.NotesTable.COLUMN_ID + "=?", new String[] {oldNoteId.toString()});
     }
 
@@ -84,8 +87,9 @@ public class RESTProcessor {
     public void processUpdatedNote(Long noteId, ClioNote noteRsp) {
         ContentValues values = new ContentValues();
         values.put(ClioContentProvider.NotesTable.COLUMN_REST_STATE, RESTConstants.RESTStates.NORMAL);
+        Long matterId = noteRsp.getNote().getRegarding().getId();
 
-        Uri uri = ClioContentProvider.getNoteUri(noteId);
+        Uri uri = ClioContentProvider.getNoteRegardMatterUri(matterId, noteId);
         getContentResolver().update(uri, values, ClioContentProvider.NotesTable.COLUMN_ID+ "=?", new String[] {noteId.toString()});
     }
 

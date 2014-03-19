@@ -117,6 +117,7 @@ public class Note {
         values.put(ClioContentProvider.NotesTable.COLUMN_ID, getId());
         values.put(ClioContentProvider.NotesTable.COLUMN_SUBJECT, getSubject());
         values.put(ClioContentProvider.NotesTable.COLUMN_DETAIL, getDetail());
+        values.put(ClioContentProvider.NotesTable.COLUMN_DATE, getDate());
         values.put(ClioContentProvider.NotesTable.COLUMN_MATTER_ID_FK, getRegarding().getId());
         return values;
     }

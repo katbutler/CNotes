@@ -31,6 +31,7 @@ public class NoteCursorAdapter extends CursorAdapter {
         Long id = cursor.getLong(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_ID));
         String subject = cursor.getString(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_SUBJECT));
         String details = cursor.getString(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_DETAIL));
+        String date = cursor.getString(cursor.getColumnIndexOrThrow(ClioContentProvider.NotesTable.COLUMN_DATE));
 
         // Set the ID as a tag to be used when the row is clicked
         view.setTag(id);
@@ -47,6 +48,14 @@ public class NoteCursorAdapter extends CursorAdapter {
         } else {
             TextView detailText = (TextView) view.findViewById(R.id.detail_text);
             detailText.setText("");
+        }
+
+        if (date != null) {
+            TextView dateText = (TextView) view.findViewById(R.id.date_text);
+            dateText.setText(date);
+        } else {
+            TextView dateText = (TextView) view.findViewById(R.id.date_text);
+            dateText.setText("");
         }
 
     }

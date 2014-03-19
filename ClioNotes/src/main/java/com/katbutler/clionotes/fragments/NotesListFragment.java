@@ -151,10 +151,10 @@ public class NotesListFragment extends ListFragment implements LoaderManager.Loa
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
-        String[] projection = { ClioContentProvider.NotesTable.COLUMN_ID, ClioContentProvider.NotesTable.COLUMN_SUBJECT, ClioContentProvider.NotesTable.COLUMN_DETAIL};
+        String[] projection = { ClioContentProvider.NotesTable.COLUMN_ID, ClioContentProvider.NotesTable.COLUMN_SUBJECT, ClioContentProvider.NotesTable.COLUMN_DETAIL, ClioContentProvider.NotesTable.COLUMN_DATE};
         Uri notesUri = ClioContentProvider.getNotesUri(getMatterId());
         System.out.println(notesUri.toString());
-        CursorLoader cursorLoader = new CursorLoader(this.getActivity(), notesUri, projection, null, null, null);
+        CursorLoader cursorLoader = new CursorLoader(this.getActivity(), notesUri, projection, null, null, ClioContentProvider.NotesTable.COLUMN_DATE + " ASC");
         return cursorLoader;
     }
 

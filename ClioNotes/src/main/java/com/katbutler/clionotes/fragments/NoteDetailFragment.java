@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.katbutler.clionotes.ClioNotesActivity;
 import com.katbutler.clionotes.R;
@@ -26,6 +27,9 @@ import com.katbutler.clionotes.models.Note;
 import com.katbutler.clionotes.rest.RESTConstants;
 
 import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * NoteDetailFragment used to edit/create {@link com.katbutler.clionotes.models.Note} details
@@ -39,6 +43,7 @@ public class NoteDetailFragment extends Fragment {
 
     private EditText subjectEditText;
     private EditText detailEditText;
+    private EditText dateEditText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,12 +83,19 @@ public class NoteDetailFragment extends Fragment {
 
         subjectEditText = (EditText) view.findViewById(R.id.subjectEditText);
         detailEditText = (EditText) view.findViewById(R.id.detailEditText);
+        dateEditText = (EditText) view.findViewById(R.id.dateEditText);
 
         Note note = ClioDatabaseQueryHelper.getNoteWithId(getContentResolver(), getNoteId());
 
         if (note != null) {
-            subjectEditText.setText(note.getSubject());
-            detailEditText.setText(note.getDetail());
+            if (note.getSubject() != null)
+                subjectEditText.setText(note.getSubject());
+
+            if (note.getDetail() != null)
+                detailEditText.setText(note.getDetail());
+
+            if (note.getDate() != null)
+                dateEditText.setText(note.getDate());
         }
 
     }
@@ -117,12 +129,17 @@ public class NoteDetailFragment extends Fragment {
      * Save the note into the local database
      */
     public void saveNote() {
+
+        if (!validateNote())
+            return;
+
         ContentValues values = new ContentValues();
         Uri uri;
 
         values.put(ClioContentProvider.NotesTable.COLUMN_ID, getNoteId());
         values.put(ClioContentProvider.NotesTable.COLUMN_SUBJECT, subjectEditText.getText().toString());
         values.put(ClioContentProvider.NotesTable.COLUMN_DETAIL, detailEditText.getText().toString());
+        values.put(ClioContentProvider.NotesTable.COLUMN_DATE, dateEditText.getText().toString());
 
         // Update the REST state based on whether it is a new note or not
         if (isNewNote()) {
@@ -138,6 +155,30 @@ public class NoteDetailFragment extends Fragment {
         hideKeyboard();
 
         getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+
+    /**
+     * Validates the notes fields and produces Toasts if invalid
+     */
+    private boolean validateNote() {
+        if (subjectEditText.getText().toString().equals("")) {
+            Toast.makeText(getActivity().getApplicationContext(), "Must specify a subject.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String date = dateEditText.getText().toString();
+
+        if (!date.equals("")) {
+            try {
+                Date d = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+            } catch (ParseException pe) {
+                Toast.makeText(getActivity().getApplicationContext(), "Date must be in the format yyyy-mm-dd", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
