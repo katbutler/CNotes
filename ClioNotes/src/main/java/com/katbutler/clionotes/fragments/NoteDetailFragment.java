@@ -171,7 +171,7 @@ public class NoteDetailFragment extends Fragment {
 
         if (!date.equals("")) {
             try {
-                Date d = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+                new SimpleDateFormat("yyyy-MM-dd").parse(date);
             } catch (ParseException pe) {
                 Toast.makeText(getActivity().getApplicationContext(), "Date must be in the format yyyy-mm-dd", Toast.LENGTH_LONG).show();
                 return false;
